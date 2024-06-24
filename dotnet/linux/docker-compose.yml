@@ -10,8 +10,9 @@ networks:
 services:
   cosmosdb:
     restart: always
-    container_name: "azure-cosmosdb-emulator"
-    hostname: "azurecosmosemulator"
+    # see https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/76
+    # can be accessed from localhost at https://cosmosdbemulatormtls.localhost:8081/_explorer/index.html
+    hostname: "cosmos.domain"
     image: 'mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest'
     mem_limit: 4GB
     tty: true
@@ -31,10 +32,8 @@ services:
     environment:
       - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
       - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=false
-      - AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=172.16.238.246
     networks:
       default:
-        ipv4_address: 172.16.238.246
   tests:
     container_name: dotnet-tests
     build:
@@ -43,10 +42,11 @@ services:
     depends_on:
       - cosmosdb
     environment:
-      - COSMOS_ENDPOINT=https://azurecosmosemulator:8081/
+      - COSMOS_ENDPOINT=https://cosmos.domain:8081/
+      - COSMOS_HOST=cosmos.domain
+      - COSMOS_PORT=8081
     env_file:
       - .env
     networks:
       default:
-        ipv4_address: 172.16.238.242
 

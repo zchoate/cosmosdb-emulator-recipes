@@ -15,4 +15,4 @@ COPY ./entrypoint.sh ./entrypoint.sh
 RUN dos2unix ./entrypoint.sh 
 RUN chmod +x ./entrypoint.sh
 
-ENTRYPOINT ["./entrypoint.sh", "azurecosmosemulator", "8081"]
+ENTRYPOINT ["./entrypoint.sh"]
